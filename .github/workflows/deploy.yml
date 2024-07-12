@@ -28,12 +28,12 @@ jobs:
       - name: Build and push Docker images
         run: |
           docker compose up --build -d
-          docker tag go-to-do-app-client:latest 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-client:latest
-          docker tag mongo:latest 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-db:latest
-          docker tag go-to-do-app-app:latest 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-app:latest
-          docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-app
-          docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-client
-          docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-db
+          docker tag go-to-do-app-client:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-client:latest
+          docker tag mongo:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-db:latest
+          docker tag go-to-do-app-app:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-app:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-app
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-client
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-db
 
       - name: Deploy to EC2
         run: |
@@ -43,14 +43,13 @@ jobs:
             aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws configure set region ${{ secrets.AWS_REGION }}
+            docker-compose down --volumes
+            docker stop $(docker ps -aq)
+            docker rm $(docker ps -aq)
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-app:latest
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-client:latest
             docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-db:latest
-            docker stop $(docker ps -aq)
-            docker rm $(docker ps -aq)
-            docker run -d -p 80:80 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-app:latest
-            docker run -d -p 3000:3000 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-client:latest
-            docker run -d -p 27017:27017 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-db:latest
+            docker-compose up -d
           EOF
 
