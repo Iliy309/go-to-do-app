@@ -2,6 +2,7 @@ name: Deploy to AWS
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -35,8 +36,10 @@ jobs:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-client
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-db
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment: dev
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Deploy to EC2
         run: |
