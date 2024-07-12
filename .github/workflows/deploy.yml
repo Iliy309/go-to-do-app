@@ -28,7 +28,6 @@ jobs:
       - name: Build and push Docker images
         run: |
           docker compose up --build -d
-          docker stop $(docker ps -aq)
           docker tag go-to-do-app-1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-app:latest
           docker tag go-to-do-client-1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-client:latest
           docker tag go-to-do-db-1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-db:latest
