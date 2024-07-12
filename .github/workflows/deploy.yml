@@ -28,9 +28,9 @@ jobs:
       - name: Build and push Docker images
         run: |
           docker compose up --build -d
-          docker tag go-to-do-app-1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-app:latest
-          docker tag go-to-do-client-1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-client:latest
-          docker tag go-to-do-db-1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-db:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-app:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-client:latest
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-db:latest
+          docker tag app-client:latest 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-client:latest
+          docker tag mongo:latest 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-db:latest
+          docker tag app-app:latest 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-app:latest
+          docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-app
+          docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-client
+          docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-db
