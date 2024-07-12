@@ -34,3 +34,17 @@ jobs:
           docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-app
           docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-client
           docker push 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-db
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i "${{ secrets.EC2_SSH_KEY }}" ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-client:latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-db:latest
+            docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-app:latest
+            docker-compose down
+            docker-compose up -d
+          EOF
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }} 
