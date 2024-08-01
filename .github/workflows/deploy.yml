@@ -28,7 +28,6 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          docker compose up --build -d
           docker build -t go-server ./go-server
           docker build -t client ./client
           docker tag go-to-do-app-client:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-dev-repository-client:latest
