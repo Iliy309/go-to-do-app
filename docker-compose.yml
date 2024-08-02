@@ -9,12 +9,12 @@ services:
       - mongo-data:/data/db
 
   client:
-    image: client:latest
+    image: 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-client
     ports:
       - "3000:3000"
 
   app:
-    image: go-server:latest
+    image: 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-app
     ports:
       - "8080:8080"
     environment:
