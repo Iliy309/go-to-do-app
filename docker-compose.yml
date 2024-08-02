@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  client:
+    image: 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-client
+    ports:
+      - "3000:3000"
+
+  app:
+    image: 730335558791.dkr.ecr.eu-central-1.amazonaws.com/my-dev-repository-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URI=mongodb://db:27017
+      - DB_NAME=test
+      - DB_COLLECTION_NAME=todolist
+
+volumes:
+  mongo-data:
